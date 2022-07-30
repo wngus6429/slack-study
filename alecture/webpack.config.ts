@@ -43,7 +43,7 @@ const config: webpack.Configuration = {
           ],
           env: {
             development: {
-              plugins: [require.resolve('react-refresh/babel')],
+              plugins: ['@emotion/babel-plugin', require.resolve('react-refresh/babel')],
             },
           },
         },
