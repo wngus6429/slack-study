@@ -43,7 +43,10 @@ const config: webpack.Configuration = {
           ],
           env: {
             development: {
-              plugins: ['@emotion/babel-plugin', require.resolve('react-refresh/babel')],
+              plugins: [['@emotion', { sourcemaps: true }], require.resolve('react-refresh/babel')],
+            },
+            production: {
+              plugins: ['@emotion'],
             },
           },
         },
