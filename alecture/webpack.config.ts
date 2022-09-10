@@ -76,6 +76,16 @@ const config: webpack.Configuration = {
     historyApiFallback: true,
     port: 3090,
     publicPath: '/dist/',
+    // CORS에러시 프론트 개발자가 설정할수 있는것
+    proxy: {
+      // 이건 api로 보낼시에 주소를 밑에 3095로 바꿔서 보내겟다는것
+      // 그래서 cors에러를 해결 하겠다는거임
+      // 둘다 localhost일 경우에만 가능
+      '/api/': {
+        target: 'http://localhost:3095',
+        changeOrigin: true,
+      },
+    },
   },
 };
 
