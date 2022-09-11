@@ -1,12 +1,15 @@
 import useInput from '@hooks/useInput';
 import { Success, Form, Error, Label, Input, LinkContainer, Button, Header } from '@pages/SignUp/styles';
-// import fetcher from '@utils/fetcher';
+import fetcher from '@utils/fetcher';
 import axios from 'axios';
 import React, { useCallback, useState } from 'react';
 import { Link, Redirect } from 'react-router-dom';
-// import useSWR from 'swr';
+import useSWR from 'swr';
 
 const LogIn = () => {
+  // fetcher 함수가 이 주소를 어떻게 처리 할 것인가.
+  // 내가 원할때 호출하기 revalidate ㅋㅋ
+  const { data, error, mutate } = useSWR('/api/users', fetcher);
   // const { data, error, revalidate, mutate } = useSWR('/api/users', fetcher);
 
   const [logInError, setLogInError] = useState(false);
@@ -17,16 +20,10 @@ const LogIn = () => {
       e.preventDefault();
       setLogInError(false);
       axios
-        .post(
-          '/api/users/login',
-          { email, password },
-          {
-            withCredentials: true,
-          },
-        )
+        .post('/api/users/login', { email, password }, { withCredentials: true })
         .then((response) => {
           console.log(response);
-          // revalidate();
+          mutate();
         })
         .catch((error) => {
           setLogInError(error.response?.data?.statusCode === 401);

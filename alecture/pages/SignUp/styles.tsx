@@ -8,7 +8,8 @@ export const Header = styled.header`
   line-height: 46px;
   letter-spacing: -0.75px;
   margin-top: 50px;
-  margin-bottom: 50px;
+  margin-bottom: 30px;
+  color: red;
 `;
 
 export const Form = styled.form`
