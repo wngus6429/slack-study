@@ -9,6 +9,9 @@ import useSWR from 'swr';
 const LogIn = () => {
   // fetcher 함수가 이 주소를 어떻게 처리 할 것인가.
   // 내가 원할때 호출하기 revalidate ㅋㅋ
+  // 로그인 성공하면 revalidate(), data가 false 였다가 데이터가 들어가면서
+  // 리랜더링이 되고, 밑에 if(data)
+  // 밑에 data나 error의 값이 바뀌면 알아서 컴포넌트가 리랜더링
   const { data, error, mutate } = useSWR('/api/users', fetcher);
   // const { data, error, revalidate, mutate } = useSWR('/api/users', fetcher);
 
@@ -20,7 +23,8 @@ const LogIn = () => {
       e.preventDefault();
       setLogInError(false);
       axios
-        .post('/api/users/login', { email, password }, { withCredentials: true })
+        .post('http://localhost:3095/api/users/login', { email, password }, { withCredentials: true })
+        // .post('/api/users/login', { email, password }, { withCredentials: true })
         .then((response) => {
           console.log(response);
           mutate();
@@ -32,13 +36,13 @@ const LogIn = () => {
     [email, password],
   );
 
-  // if (data === undefined) {
-  //   return <div>로딩중...</div>;
-  // }
+  if (data === undefined) {
+    return <div>로딩중...</div>;
+  }
 
-  // if (data) {
-  //   return <Redirect to="/workspace/sleact/channel/일반" />;
-  // }
+  if (data) {
+    return <Redirect to="/workspace/channel" />;
+  }
 
   // console.log(error, userData);
   // if (!error && userData) {

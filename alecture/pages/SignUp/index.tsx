@@ -1,13 +1,17 @@
 import useInput from '@hooks/useInput';
 import React, { useCallback, useState } from 'react';
 import axios from 'axios';
+import fetcher from '@utils/fetcher';
 import { Form, Error, Success, Label, Input, LinkContainer, Button, Header } from './styles';
-import { Link } from 'react-router-dom';
+import { Link, Redirect } from 'react-router-dom';
+import useSWR from 'swr';
 
 //* 함수 안에서랑 밖에서 변수를 선언하는것도 되게 중요한데.
 //? 함수 밖 (즉 여기서) 변수를 선언해두면 다른곳에서 이 컴포넌트를
 //! 쓰거나 할때 여기에 있는 변수가 전역변수가 되어버리기 때문
 const SignUp = () => {
+  const { data, error, mutate } = useSWR('/api/users', fetcher);
+
   const [email, onChangeEmail] = useInput('');
   const [nickname, onChangeNickname] = useInput('');
   //! 위에는 커스텀훅, 밑에는 그냥 훅임. 2가지 비교를 위해
@@ -81,6 +85,10 @@ const SignUp = () => {
     },
     [email, nickname, password, passwordCheck, mismatchError],
   );
+
+  if (data) {
+    return <Redirect to="/workspace/channel" />;
+  }
 
   return (
     <div id="container">
