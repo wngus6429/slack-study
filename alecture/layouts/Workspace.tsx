@@ -1,3 +1,4 @@
+import { Button } from '@pages/SignUp/styles';
 import axios from 'axios';
 import React, { FC, useCallback } from 'react';
 import fetcher from '@utils/fetcher';
@@ -11,7 +12,7 @@ const Workspace: FC = ({ children }) => {
   const onLogout = useCallback(() => {
     axios
       .post('http://localhost:3095/api/users/logout', null, {
-        withCredentials: true,
+        withCredentials: true, //쿠키공유
       })
       .then(() => {
         mutate();
@@ -25,7 +26,7 @@ const Workspace: FC = ({ children }) => {
 
   return (
     <div>
-      <button onClick={onLogout}>로그아웃</button>
+      <Button onClick={onLogout}>로그아웃</Button>
       {children}
     </div>
   );
