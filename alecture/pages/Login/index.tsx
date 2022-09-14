@@ -12,6 +12,7 @@ const LogIn = () => {
   // 로그인 성공하면 revalidate(), data가 false 였다가 데이터가 들어가면서
   // 리랜더링이 되고, 밑에 if(data)
   // 밑에 data나 error의 값이 바뀌면 알아서 컴포넌트가 리랜더링
+  // mutate는 서버에 요청 안보내고 데이터를 수정함.
   const { data, error, mutate } = useSWR('http://localhost:3095/api/users', fetcher);
   // const { data, error, revalidate, mutate } = useSWR('/api/users', fetcher);
 
@@ -25,8 +26,8 @@ const LogIn = () => {
       axios
         .post('http://localhost:3095/api/users/login', { email, password }, { withCredentials: true })
         // .post('/api/users/login', { email, password }, { withCredentials: true })
-        .then(() => {
-          mutate();
+        .then((response) => {
+          mutate(response.data);
         })
         .catch((error) => {
           setLogInError(error.response?.data?.statusCode === 401);
@@ -34,10 +35,10 @@ const LogIn = () => {
     },
     [email, password],
   );
-
-  // if (data === undefined) {
-  //   return <div>로딩중...</div>;
-  // }
+  // 이거 해주는 이유는 화면 깜빡임 떄문에
+  if (data === undefined) {
+    return <div>로딩중...</div>;
+  }
   console.log('로그인완료', data);
 
   if (data) {

@@ -86,6 +86,11 @@ const SignUp = () => {
     [email, nickname, password, passwordCheck, mismatchError],
   );
 
+  // 이거 해주는 이유는 화면 깜빡임 떄문에
+  if (data === undefined) {
+    return <div>로딩중...</div>;
+  }
+
   if (data) {
     return <Redirect to="/workspace/channel" />;
   }
