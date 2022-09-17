@@ -174,7 +174,7 @@ export const AddButton = styled.button`
   display: inline-block;
   width: 40px;
   height: 40px;
-  background: transparent;
+  background: blue;
   border: none;
   cursor: pointer;
 `;

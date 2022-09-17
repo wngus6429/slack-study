@@ -65,6 +65,7 @@ const Workspace: FC = ({ children }) => {
   }, []);
 
   const onClickCreateWorkspace = useCallback(() => {
+    console.log('작동');
     setShowCreateWorkspaceModal(true);
   }, []);
 
@@ -95,9 +96,10 @@ const Workspace: FC = ({ children }) => {
       });
   }, []);
 
-  const onCloseModal = useCallback(() => {}, []);
+  const onCloseModal = useCallback(() => {
+    setShowCreateWorkspaceModal(false);
+  }, []);
 
-  console.log('로그아웃후', userData);
   if (userData === false) {
     console.log('data꾸에엑2', userData);
     return <Redirect to="/login" />;
@@ -131,7 +133,7 @@ const Workspace: FC = ({ children }) => {
       </Header>
       <WorkspaceWrapper>
         <Workspaces>
-          {userData?.Workspaces.map((ws) => {
+          {userData?.Workspaces?.map((ws) => {
             return (
               // Link는 a 태그 대체. 리액트에서는
               <Link key={ws.id} to={`/workspace/${123}/channel/`}>
@@ -140,9 +142,6 @@ const Workspace: FC = ({ children }) => {
             );
           })}
           <AddButton onClick={onClickCreateWorkspace}></AddButton>
-          <AddButton />
-          <AddButton />
-          <AddButton />
         </Workspaces>
         <Channels>
           <WorkspaceName>Sleact</WorkspaceName>
