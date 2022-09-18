@@ -169,12 +169,12 @@ export const Chats = styled.div`
 `;
 
 export const AddButton = styled.button`
-  color: white;
+  color: black;
   font-size: 24px;
   display: inline-block;
   width: 40px;
   height: 40px;
-  background: blue;
+  background: transparent;
   border: none;
   cursor: pointer;
 `;

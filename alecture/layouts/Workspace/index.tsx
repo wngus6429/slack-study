@@ -13,11 +13,12 @@ import {
   LogOutButton,
   WorkspaceButton,
   AddButton,
+  WorkspaceModal,
 } from '@layouts/Workspace/styles';
 import Modal from '@components/Modal';
 import axios from 'axios';
 import { IUser } from 'typings/db';
-import React, { FC, useCallback, useState } from 'react';
+import React, { VFC, useCallback, useState } from 'react';
 import fetcher from '@utils/fetcher';
 import useSWR from 'swr';
 import { Redirect } from 'react-router';
@@ -27,15 +28,18 @@ import { Route, Link, Switch } from 'react-router-dom';
 import { Button, Input, Label } from '@pages/SignUp/styles';
 import useInput from '@hooks/useInput';
 import { toast } from 'react-toastify';
+import CreateChannelModal from '@components/CreateChannelModal';
 
 const Channel = loadable(() => import('@pages/Channel'));
 const DirectMessage = loadable(() => import('@pages/DirectMessage'));
 
 // FC라는 타입안에 children이 들어있다.
 // children 안 쓰는곳은 VFC 로 하면된다.
-const Workspace: FC = ({ children }) => {
+const Workspace: VFC = () => {
   const [showUserMenu, setShowUserMenu] = useState(false);
   const [showCreateWorkspaceModal, setShowCreateWorkspaceModal] = useState(false);
+  const [showWorkspaceModal, setShowWorkspaceModal] = useState(false);
+  const [showCreateChannelModal, setShowCreateChannelModal] = useState(false);
   const [newWorkspace, onChangeNewWorkspace, setNewWorkspace] = useInput('');
   const [newUrl, onChangeNewUrl, setNewUrl] = useInput('');
   const { data: userData, error, mutate } = useSWR<IUser | false>('http://localhost:3095/api/users', fetcher, {
@@ -65,39 +69,51 @@ const Workspace: FC = ({ children }) => {
   }, []);
 
   const onClickCreateWorkspace = useCallback(() => {
-    console.log('작동');
     setShowCreateWorkspaceModal(true);
   }, []);
 
-  const onCreateWorkspace = useCallback((e) => {
-    e.preventDefault();
-    // 띄어 쓰기도 막아야 해서 trim() 해줘야함
-    if (!newWorkspace || !newWorkspace.trim()) return;
-    if (!newUrl || !newUrl.trim()) return;
-    axios
-      .post(
-        'http://localhost:3095/api/workspaces',
-        {
-          workspace: newWorkspace,
-          url: newUrl,
-        },
-        { withCredentials: true },
-      )
-      .then(() => {
-        mutate();
-        setShowCreateWorkspaceModal(false);
-        // 인풋창 비우기
-        setNewWorkspace('');
-        setNewUrl('');
-      })
-      .catch(() => {
-        console.dir(error);
-        toast.error(error.response?.data, { position: 'bottom-center' });
-      });
+  const onClickAddChannel = useCallback(() => {
+    setShowCreateChannelModal(true);
   }, []);
 
+  const onCreateWorkspace = useCallback(
+    (e) => {
+      e.preventDefault();
+      // 띄어 쓰기도 막아야 해서 trim() 해줘야함
+      if (!newWorkspace || !newWorkspace.trim()) return;
+      if (!newUrl || !newUrl.trim()) return;
+      axios
+        .post(
+          'http://localhost:3095/api/workspaces',
+          {
+            workspace: newWorkspace,
+            url: newUrl,
+          },
+          { withCredentials: true },
+        )
+        .then(() => {
+          mutate();
+          setShowCreateWorkspaceModal(false);
+          // 인풋창 비우기
+          setNewWorkspace('');
+          setNewUrl('');
+        })
+        .catch(() => {
+          console.dir(error);
+          toast.error(error.response?.data, { position: 'bottom-center' });
+        });
+    },
+    [newWorkspace, newUrl],
+  );
+
+  //** 이 함수를 사요 */
   const onCloseModal = useCallback(() => {
     setShowCreateWorkspaceModal(false);
+    setShowCreateChannelModal(false);
+  }, []);
+
+  const toggleWorkspaceModal = useCallback(() => {
+    setShowWorkspaceModal((prev) => !prev);
   }, []);
 
   if (userData === false) {
@@ -106,7 +122,7 @@ const Workspace: FC = ({ children }) => {
   }
 
   if (!userData) return null;
-
+  // 리턴 아래에 훅스들이 있으면 안된다
   return (
     <div>
       <Header>
@@ -144,8 +160,17 @@ const Workspace: FC = ({ children }) => {
           <AddButton onClick={onClickCreateWorkspace}></AddButton>
         </Workspaces>
         <Channels>
-          <WorkspaceName>Sleact</WorkspaceName>
-          <MenuScroll>MenuScroll</MenuScroll>
+          <WorkspaceName onClick={toggleWorkspaceModal}>Sleact</WorkspaceName>
+          <MenuScroll>
+            <Menu show={showWorkspaceModal} onCloseModal={toggleWorkspaceModal} style={{ top: 95, left: 80 }}>
+              <WorkspaceModal>
+                <h2>Sleack</h2>
+                {/* <button onClick={onClickInviteWorkspace}>워크스페이스에 사용자 초대/button> */}
+                <button onClick={onClickAddChannel}>채널 만들기</button>
+                <button onClick={onLogout}>로그아웃</button>
+              </WorkspaceModal>
+            </Menu>
+          </MenuScroll>
         </Channels>
         <Chats>
           <Switch>
@@ -170,6 +195,8 @@ const Workspace: FC = ({ children }) => {
           <Button type="submit">생성하기</Button>
         </form>
       </Modal>
+      {/* input이 있는 컴포넌트는 따로 만드는게 리랜더링할떄 좋다. */}
+      <CreateChannelModal show={showCreateChannelModal} onCloseModal={onCloseModal} />
     </div>
   );
 };

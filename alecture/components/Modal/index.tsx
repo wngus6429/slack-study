@@ -1,5 +1,5 @@
 import React, { FC, useCallback } from 'react';
-import { CreateModal, CloseModalButton } from './styles';
+import { CreateModal, CloseModalButton } from '@components/Modal/styles';
 
 interface Props {
   show: boolean;
@@ -17,6 +17,7 @@ const Modal: FC<Props> = ({ show, children, onCloseModal }) => {
     <CreateModal onClick={onCloseModal}>
       <div onClick={stopPropagation}>
         <CloseModalButton onClick={onCloseModal}>&times;</CloseModalButton>
+        {children}
       </div>
     </CreateModal>
   );
