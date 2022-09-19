@@ -17,11 +17,11 @@ import {
 } from '@layouts/Workspace/styles';
 import Modal from '@components/Modal';
 import axios from 'axios';
-import { IUser } from 'typings/db';
+import { IChannel, IUser } from 'typings/db';
 import React, { VFC, useCallback, useState } from 'react';
 import fetcher from '@utils/fetcher';
 import useSWR from 'swr';
-import { Redirect } from 'react-router';
+import { Redirect, useParams } from 'react-router';
 import gravatar from 'gravatar';
 import loadable from '@loadable/component';
 import { Route, Link, Switch } from 'react-router-dom';
@@ -42,11 +42,18 @@ const Workspace: VFC = () => {
   const [showCreateChannelModal, setShowCreateChannelModal] = useState(false);
   const [newWorkspace, onChangeNewWorkspace, setNewWorkspace] = useInput('');
   const [newUrl, onChangeNewUrl, setNewUrl] = useInput('');
+  const { workspace } = useParams<{ workspace: string }>();
+
   const { data: userData, error, mutate } = useSWR<IUser | false>('http://localhost:3095/api/users', fetcher, {
     dedupingInterval: 2000, // 2초동안에는 useSWR로 위 URL을 아무리 많이 요청해도
     // 서버에는 딱 1번만 요청보내고 나머지는 첫번쨰 요청 성공에대한 그 데이터를 그대로 가져옴
     // (컴포넌트 수백개면 요청 수백개 보내는거 아니냐는 질문에 대한 답변)
   });
+  const { data: channelData } = useSWR<IChannel[]>(
+    // userData가 있을때에만 SWR 작동할수 있게끔
+    userData ? `http://localhost:3095/api/workspaces/${workspace}/channels` : null,
+    fetcher,
+  );
   const onLogout = useCallback(() => {
     axios
       .post('http://localhost:3095/api/users/logout', null, {
@@ -120,6 +127,7 @@ const Workspace: VFC = () => {
     console.log('data꾸에엑2', userData);
     return <Redirect to="/login" />;
   }
+  console.log('채널데', channelData);
 
   if (!userData) return null;
   // 리턴 아래에 훅스들이 있으면 안된다
@@ -170,6 +178,10 @@ const Workspace: VFC = () => {
                 <button onClick={onLogout}>로그아웃</button>
               </WorkspaceModal>
             </Menu>
+            {/* 없을수도 있다는 ? 하기 */}
+            {channelData?.map((v: IChannel) => (
+              <div>{v.name}</div>
+            ))}
           </MenuScroll>
         </Channels>
         <Chats>
@@ -177,8 +189,8 @@ const Workspace: VFC = () => {
             {/* workspace 안에 있더라도 path를 이런식으로 적어야함 */}
             {/* 주소가 일관성있게 계층적이면 레이아웃 자체에서 판단해서 route */}
             {/* 만약 주소가 /sw/dm 이런식이면 안됨 */}
-            <Route path="/workspace/channel" component={Channel} />
-            <Route path="/workspace/dm" component={DirectMessage} />
+            <Route path="/workspace/:workspace/channel/:channel" component={Channel} />
+            <Route path="/workspace/:workspace/dm/:id" component={DirectMessage} />
           </Switch>
         </Chats>
       </WorkspaceWrapper>
@@ -196,7 +208,11 @@ const Workspace: VFC = () => {
         </form>
       </Modal>
       {/* input이 있는 컴포넌트는 따로 만드는게 리랜더링할떄 좋다. */}
-      <CreateChannelModal show={showCreateChannelModal} onCloseModal={onCloseModal} />
+      <CreateChannelModal
+        show={showCreateChannelModal}
+        onCloseModal={onCloseModal}
+        setShowCreateChannelModal={setShowCreateChannelModal}
+      />
     </div>
   );
 };

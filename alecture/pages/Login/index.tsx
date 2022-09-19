@@ -42,7 +42,7 @@ const LogIn = () => {
   console.log('로그인완료', data);
 
   if (data) {
-    return <Redirect to="/workspace/channel" />;
+    return <Redirect to="/workspace/sleack/channel/일반" />;
   }
 
   // console.log(error, userData);
