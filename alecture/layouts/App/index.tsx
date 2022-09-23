@@ -3,7 +3,7 @@ import loadable from '@loadable/component';
 import { Switch, Route, Redirect } from 'react-router-dom';
 
 //코드스플리팅
-const LogIn = loadable(() => import('@pages/Login'));
+const LogIn = loadable(() => import('@pages/LogIn'));
 const SignUp = loadable(() => import('@pages/SignUp'));
 const Workspace = loadable(() => import('@layouts/Workspace'));
 

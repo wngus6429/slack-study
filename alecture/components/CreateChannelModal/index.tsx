@@ -19,7 +19,6 @@ const CreateChannelModal: VFC<Props> = ({ show, onCloseModal, setShowCreateChann
   //! :workspace :channel 같은 주소의 값을 가져올수 있다.
   //! 주소가 데이터의 역할을 하고 있는거지, 이거 안쓰면 또 상태관리 해야해서 개빡침
   const { workspace, channel } = useParams<{ workspace: string; channel: string }>();
-
   const { data: userData, error, mutate } = useSWR<IUser | false>('http://localhost:3095/api/users', fetcher, {
     dedupingInterval: 2000, // 2초동안에는 useSWR로 위 URL을 아무리 많이 요청해도
     // 서버에는 딱 1번만 요청보내고 나머지는 첫번쨰 요청 성공에대한 그 데이터를 그대로 가져옴
@@ -30,7 +29,7 @@ const CreateChannelModal: VFC<Props> = ({ show, onCloseModal, setShowCreateChann
     userData ? `http://localhost:3095/api/workspaces/${workspace}/channels` : null,
     fetcher,
   );
-
+  console.log('워크', workspace);
   const onCreateChannel = useCallback(
     (e) => {
       e.preventDefault();
@@ -39,7 +38,9 @@ const CreateChannelModal: VFC<Props> = ({ show, onCloseModal, setShowCreateChann
       axios
         .post(
           `http://localhost:3095/api/workspaces/${workspace}/channels`,
-          { name: newChannel },
+          {
+            name: newChannel,
+          },
           { withCredentials: true },
         )
         .then(() => {
@@ -48,19 +49,19 @@ const CreateChannelModal: VFC<Props> = ({ show, onCloseModal, setShowCreateChann
           setNewChannel('');
         })
         .catch((error) => {
-          console.dir(error);
+          console.dir('채널 생성 에러', error);
           toast.error(error.response?.data, { position: 'bottom-center' });
         });
     },
-    [newChannel],
+    [workspace, newChannel],
   );
 
   return (
     <Modal show={show} onCloseModal={onCloseModal}>
       <form onSubmit={onCreateChannel}>
-        <Label id="Channel-label">
+        <Label id="channel-label">
           <span>채널</span>
-          <Input id="Channel" value={newChannel} onChange={onChangeNewChannel} />
+          <Input id="channel" value={newChannel} onChange={onChangeNewChannel} />
         </Label>
         <Button type="submit">생성하기</Button>
       </form>

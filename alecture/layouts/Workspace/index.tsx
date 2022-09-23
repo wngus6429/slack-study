@@ -65,7 +65,7 @@ const Workspace: VFC = () => {
         // 서버 처리 후 반영은 패시미스틱 UI (일반적으로 이거)
         // 여기 뒤에 true면 OPTIMISTIC이 된다. shouldRevalidate()
         console.log('리스폰', response);
-        mutate(false);
+        mutate(false, false);
         // mutate(response.data, false);
       });
   }, []);
@@ -127,7 +127,6 @@ const Workspace: VFC = () => {
     console.log('data꾸에엑2', userData);
     return <Redirect to="/login" />;
   }
-  console.log('채널데', channelData);
 
   if (!userData) return null;
   // 리턴 아래에 훅스들이 있으면 안된다
@@ -172,16 +171,16 @@ const Workspace: VFC = () => {
           <MenuScroll>
             <Menu show={showWorkspaceModal} onCloseModal={toggleWorkspaceModal} style={{ top: 95, left: 80 }}>
               <WorkspaceModal>
-                <h2>Sleack</h2>
-                {/* <button onClick={onClickInviteWorkspace}>워크스페이스에 사용자 초대/button> */}
+                <h2>Sleact</h2>
+                {/*<button onClick={onClickInviteWorkspace}>워크스페이스에 사용자 초대</button>*/}
                 <button onClick={onClickAddChannel}>채널 만들기</button>
                 <button onClick={onLogout}>로그아웃</button>
               </WorkspaceModal>
             </Menu>
             {/* 없을수도 있다는 ? 하기 */}
-            {channelData?.map((v: IChannel) => (
-              <div>{v.name}</div>
-            ))}
+            {channelData?.map((v) => {
+              return <div>{v.name}</div>;
+            })}
           </MenuScroll>
         </Channels>
         <Chats>

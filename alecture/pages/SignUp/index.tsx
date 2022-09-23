@@ -66,8 +66,7 @@ const SignUp = () => {
         setSignUpError(''); //! 초기화 한번 해주기, 연달아 클릭하는놈
         setSignUpSuccess(false);
         axios
-          // .post('http://localhost:3095/api/users', {
-          .post('/api/users', {
+          .post('http://localhost:3095/api/users', {
             email,
             nickname,
             password,
