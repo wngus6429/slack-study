@@ -81,12 +81,12 @@ const config: webpack.Configuration = {
     //? 그래서 cors에러를 해결 하겠다는거임
     //? 둘다 localhost일 경우에만 가능
     //! 배포할때는 이 기능을 사용하지 않는다.
-    // proxy: {
-    //   '/api/': {
-    //     target: 'http://localhost:3095',
-    //     changeOrigin: true,
-    //   },
-    // },
+    proxy: {
+      '/api/': {
+        target: 'http://localhost:3095',
+        changeOrigin: true,
+      },
+    },
   },
 };
 
