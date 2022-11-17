@@ -13,7 +13,7 @@ const LogIn = () => {
   // 리랜더링이 되고, 밑에 if(data)
   // 밑에 data나 error의 값이 바뀌면 알아서 컴포넌트가 리랜더링
   // mutate는 서버에 요청 안보내고 데이터를 수정함.
-  const { data, error, mutate } = useSWR('http://localhost:3095/api/users', fetcher);
+  const { data, error, mutate } = useSWR('/api/users', fetcher);
   // const { data, error, revalidate, mutate } = useSWR('/api/users', fetcher);
 
   const [logInError, setLogInError] = useState(false);
@@ -24,7 +24,7 @@ const LogIn = () => {
       e.preventDefault();
       setLogInError(false);
       axios
-        .post('http://localhost:3095/api/users/login', { email, password }, { withCredentials: true })
+        .post('/api/users/login', { email, password }, { withCredentials: true })
         // .post('/api/users/login', { email, password }, { withCredentials: true })
         .then((response) => {
           mutate(response.data);
@@ -49,6 +49,7 @@ const LogIn = () => {
   // if (!error && userData) {
   //   console.log('로그인됨', userData);
   //   return <Redirect to="/workspace/sleact/channel/일반" />;
+
   // }
 
   return (

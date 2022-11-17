@@ -10,7 +10,7 @@ import useSWR from 'swr';
 //? 함수 밖 (즉 여기서) 변수를 선언해두면 다른곳에서 이 컴포넌트를
 //! 쓰거나 할때 여기에 있는 변수가 전역변수가 되어버리기 때문
 const SignUp = () => {
-  const { data, error, mutate } = useSWR('http://localhost:3095/api/users', fetcher);
+  const { data, error, mutate } = useSWR('/api/users', fetcher);
 
   const [email, onChangeEmail] = useInput('');
   const [nickname, onChangeNickname] = useInput('');
@@ -66,7 +66,7 @@ const SignUp = () => {
         setSignUpError(''); //! 초기화 한번 해주기, 연달아 클릭하는놈
         setSignUpSuccess(false);
         axios
-          .post('http://localhost:3095/api/users', {
+          .post('/api/users', {
             email,
             nickname,
             password,
@@ -86,9 +86,9 @@ const SignUp = () => {
   );
 
   // 이거 해주는 이유는 화면 깜빡임 떄문에
-  if (data === undefined) {
-    return <div>로딩중...</div>;
-  }
+  // if (data === undefined) {
+  //   return <div>로딩중...</div>;
+  // }
 
   if (data) {
     return <Redirect to="/workspace/sleact/channel/일반" />;

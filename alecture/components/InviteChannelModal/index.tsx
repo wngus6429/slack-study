@@ -20,7 +20,7 @@ const InviteChannelModal: FC<Props> = ({ show, onCloseModal, setShowInviteChanne
   const { data: userData } = useSWR<IUser>('/api/users', fetcher);
   const { mutate: mutateMembers } = useSWR<IUser[]>(
     // 어떤 워크스페이스, 어떤 채널에 멤버들을 가지고 오는지.
-    userData && channel ? `http://localhost:3095/api/workspaces/${workspace}/channels/${channel}/members` : null,
+    userData && channel ? `/api/workspaces/${workspace}/channels/${channel}/members` : null,
     fetcher,
   );
 
@@ -31,7 +31,7 @@ const InviteChannelModal: FC<Props> = ({ show, onCloseModal, setShowInviteChanne
         return;
       }
       axios
-        .post(`http://localhost:3095/api/workspaces/${workspace}/channels/${channel}/members`, {
+        .post(`/api/workspaces/${workspace}/channels/${channel}/members`, {
           email: newMember,
         })
         .then(() => {
